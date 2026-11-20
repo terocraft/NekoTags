@@ -10,3 +10,10 @@ commands:
       description: Comando principal para las tags!
       usage: /<command>
       aliases: [tags, etiquetas]
+permissions:
+   nekotags.admin:
+      description: Permite administrar las etiquetas (reload, give, remove, list)
+      default: op
+   nekotags.tag.*:
+      description: Permite usar cualquier etiqueta
+      default: op
