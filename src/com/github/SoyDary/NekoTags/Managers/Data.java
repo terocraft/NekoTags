@@ -24,7 +24,7 @@ import com.github.SoyDary.NekoTags.NekoTags;
 		
 	public Data(NekoTags plugin) {
 		this.offhandItems = new HashMap<Player, ItemStack>();
-		this.configs = new HashMap<String, FileConfiguration>();
+		this.configs = new java.util.concurrent.ConcurrentHashMap<String, FileConfiguration>();
 		this.plugin = plugin;
 	}
 	
@@ -62,20 +62,21 @@ import com.github.SoyDary.NekoTags.NekoTags;
 	
 	public void saveConfig(String uuid) {
 		File file = new File("plugins/NekoTags/Players/"+uuid+".yml");
-		FileConfiguration config = configs.getOrDefault(uuid, YamlConfiguration.loadConfiguration(file));
-		try {
-			config.save(file);
-	    }
-	    catch (IOException e) {
-	        e.printStackTrace();
-	    }
+		String data = getConfiguration(uuid).saveToString();
+		Runnable write = () -> {
+			try {
+				file.getParentFile().mkdirs();
+				java.nio.file.Files.writeString(file.toPath(), data);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		};
+		if(plugin.isEnabled()) Bukkit.getScheduler().runTaskAsynchronously(plugin, write);
+		else write.run();
 	}
 	
 	public FileConfiguration getConfiguration(String uuid) {
-		File file = new File("plugins/NekoTags/Players/"+uuid+".yml");
-		FileConfiguration config = configs.getOrDefault(uuid, YamlConfiguration.loadConfiguration(file));
-		configs.put(uuid, config);
-		return config;
+		return configs.computeIfAbsent(uuid, id -> YamlConfiguration.loadConfiguration(new File("plugins/NekoTags/Players/"+id+".yml")));
 	}
 	
 	public Boolean hasTag(Player p, String tag) {
