@@ -53,23 +53,18 @@ public class Utils {
 		for(Player p : Bukkit.getOnlinePlayers()) {
 			if(p.getName().equalsIgnoreCase(str)) return Bukkit.getOfflinePlayer(p.getUniqueId());
 		}
-		OfflinePlayer of = Bukkit.getOfflinePlayer(str);
-		if(plugin.essentials == null && !of.hasPlayedBefore()) {
-			return of;
-		}
-		
-		if(str.length() == 36) {
-			User user = plugin.essentials.getUser(UUID.fromString(str));
+		if(plugin.essentials != null) {
+			User user = null;
+			try {
+				user = str.length() == 36 ? plugin.essentials.getUser(UUID.fromString(str)) : plugin.essentials.getUser(str);
+			} catch (IllegalArgumentException ignored) {
+			}
 			if(user != null) {
-				return Bukkit.getPlayer(user.getUUID());
+				return Bukkit.getOfflinePlayer(user.getUUID());
 			}
 		}
-		User user = plugin.essentials.getUser(str);
-		if(user != null) {
-			return Bukkit.getOfflinePlayer(user.getUUID());
-		}
-		return null;
-		
+		OfflinePlayer of = Bukkit.getOfflinePlayer(str);
+		return of.hasPlayedBefore() ? of : null;
 	}
 	
 	public String fixColors(String text) {

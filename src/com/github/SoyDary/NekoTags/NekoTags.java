@@ -1,6 +1,7 @@
 package com.github.SoyDary.NekoTags;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -38,7 +39,9 @@ public class NekoTags extends JavaPlugin{
 	}
 	
 	public void onDisable() {
-		for(Player p : getData().offhandItems.keySet()) p.closeInventory();
+		if(this.data != null) {
+			for(Player p : new ArrayList<>(getData().offhandItems.keySet())) p.closeInventory();
+		}
 		getServer().getConsoleSender().sendMessage("[NekoTags] plugin desactivado!");
 	}
 	
