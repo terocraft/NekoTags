@@ -14,6 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
@@ -126,6 +127,13 @@ public class InventoryListener implements Listener{
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		plugin.getData().checkCurrentTag(event.getPlayer());
+	}
+
+	@EventHandler
+	public void onQuit(PlayerQuitEvent event) {
+		Player p = event.getPlayer();
+		plugin.getManager().guis.remove(p);
+		plugin.getData().offhandItems.remove(p);
 	}
 	
 	
